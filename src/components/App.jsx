@@ -4,13 +4,29 @@ import { Contacts } from './Contacts/Contacts';
 import { nanoid } from 'nanoid';
 import { Filter } from './Filter/Filter';
 import { Section } from './App.styled';
-
+const localStorageKey = 'phone-contacts';
 export class App extends Component {
   state = {
     contacts: [],
     filter: '',
   };
+  componentDidMount() {
+    const savedContacts = localStorage.getItem(localStorageKey);
+    if (savedContacts !== null) {
+      this.setState({
+        contacts: JSON.parse(savedContacts),
+      });
+    }
+  }
 
+  componentDidUpdate(prevProps, prevState) {
+    const { contacts: prevContacts } = prevState;
+    const { contacts: nextContacts } = this.state;
+
+    if (prevContacts !== nextContacts) {
+      localStorage.setItem(localStorageKey, JSON.stringify(nextContacts));
+    }
+  }
   handleSearch = event => {
     this.setState({ filter: event.target.value });
   };
